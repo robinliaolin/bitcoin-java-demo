@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/pb.css">
+    <script type="text/javascript" src="js/jquery-1.11.0.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="js/jsrsasign-all-min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="js/pb.js" charset="UTF-8"></script>
+
+</head>
+<body>
+    <div class="input-group">
+        <input type="text" class="form-control" placeholder="请输入内容" aria-describedby="basic-addon1" id="inputId">
+    </div>
+    <div class="btn-group" role="group" aria-label="...">
+        <button type="button" class="btn btn-default" onclick="addFengmian()" id="addFengMianId">添加封面</button>
+        <button type="button" class="btn btn-default" onclick="addNote()" id="addNoteId">添加记录</button>
+        <button type="button" class="btn btn-default" onclick="checkHash()" id="showDataId">校验数据</button>
+        <button type="button" class="btn btn-default" onclick="gotoSendTransance()" id="goToSendTransanceId">转账</button>
+    </div>
+    <div id="showMsgId"></div>
+    <table class="table" id="tableId">
+        <theader>
+            <tr >
+                <td class="active">编号</td>
+                <td class="active">内容</td>
+                <td class="active">哈希值</td>
+                <td class="active">工作量证明</td>
+                <td class="active">上一个区块哈希值</td>
+            </tr>
+        </theader>
+        <tbody id="tbodyId">
+
+        </tbody>
+
+
+    </table>
+    <script type="text/javascript">
+
+        function addFengmian() {
+            var url = "/addFengmian";
+            var content=$("#inputId").val();
+            console.log(url)
+            $.post(url,"content="+content,function(data,status) {
+                console.log(data);
+                $("#showMsgId").text(data);
+                showData()
+            })
+
+        }
+        function addNote() {
+            var url = "/addNote";
+            $.post(url,"note="+$("#inputId").val(),function(data) {
+                console.log(data);
+                $("#showMsgId").text(data);
+                showData()
+            })
+
+        }
+        function showData() {
+            $.post("/showData",function(data) {
+                console.log(data);
+                // data.each(function (i,index) {
+                //      var block= data[index];
+                //      var id = block.id;
+                //      var content=block.content;
+                //      var hash = block.hash;
+                //      $("#tableId").append("<tr ><td>"+id+"</td><td >"+content+"</td><td >"+hash+"</td></tr>")
+                // })
+                $("#tbodyId").html("");
+                for (var i = 0; i <data.length ; i++) {
+                    var block= data[i];
+                    var id = block.id;
+                    var content=block.content;
+                    var hash = block.hash;
+                    var nonce = block.nonce;
+                    var preHash = block.preHash;
+                    $("#tbodyId").append("<tr ><td>"+id+"</td><td >"+content+"</td><td >"+hash+"</td><td >"+nonce+"</td><td >"+preHash+"</td></tr>")
+                }
+            },"json")
+
+        }
+        function checkHash() {
+            var url = "/checkHash";
+            $.post(url,function(data) {
+                console.log(data);
+                $("#showMsgId").text(data);
+            })
+        }
+        function gotoSendTransance(){
+            console.log("index:gotoSendTransance");
+            window.location.href="gotoSendTransance";
+
+        }
+        $(function () {
+            showData();
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/pb.css">
+    <script type="text/javascript" src="js/jquery-1.11.0.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="js/jsrsasign-all-min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="js/pb.js" charset="UTF-8"></script>
+    <style>
+        span{
+            margin-top: 5px;
+            margin-bottom: 5px;
+            height: 40px;
+        }
+    </style>
+    <script type="text/javascript">
+        function sendContent() {
+            var senderPrivateKey = $("#myPrivateKeyID").val();
+            var senderPublicKey = $("#myPublicKeyID").val();
+            var content = $("#contentID").val();
+            var recievePublicKey = $("#recievePublicKeyID").val();
+
+            var priKey = KEYUTIL.getKey(senderPrivateKey);
+            var sig = new KJUR.crypto.Signature({"alg":"SHA256withRSA"});
+            sig.init(priKey);
+            sig.updateString(content);
+            var sigValueHex = sig.sign();
+            console.log(sigValueHex);
+            $.post("/sendTransance",{
+                signData:sigValueHex,
+                senderPublicKey:senderPublicKey,
+                content:content,
+                recevierPublicKey:recievePublicKey
+            },function (data, status) {
+                console.log(data);
+                $("#returnResultId").text(data);
+            })
+
+        }
+    </script>
+</head>
+<body>
+<form >
+    <span>我的私钥</span>
+    <textarea class="form-control" rows="3" id="myPrivateKeyID">-----BEGIN PRIVATE KEY-----
+MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDcwVl/gd0wud+3sHhGyj7l3P6y
+GyTSzTgnTg2KmUQJfRQzfuYPAK5a/zCpfqJkWNhYu9HEKs6e39lKQny99gZaHN8aajYKpYCiQzU8
+Wb1sOCXuP7mQ2mM8LDU0wsiD0BrA84QiZs0DY9n8yZO0FkXBB1+l6Dis/k4h6QQ6zChghwYbDLG+
+jtx8c0KajSkA8FEz9lAoNiVzW/cA/ExafXndGJTiKJJBTc2rtChiLcW6AcKO7pZtzb/0tmo6+5ls
+86fe5gywPmQPFWsK4RgX0AeHv/J/69GQh/JpjKEmEgRCubDK7U7mXy/ckUe8VjthbrI+BPu6iac/
+PqkjDwUZl0urAgMBAAECggEAQYyYCqiBCWrn5x9bV4nOS2rnpfMxZ/bP6bvfgXwpG7gsO24+2c2V
++Cc2R932Ul2fQBnlG56qY7qMRuSfLbjUAgX4qVtIWLj0DTpvoE/1UyEJAkmhzEVMmh12XwhHifxN
+NWYZoi1sSslnfQxN83d5luudlyHxUkzg3mjWfK8Kfj6MLHAk5EORdaa95yyTaWdCZu8HZWiSxwBE
+sWTA2XQOkLajidlM2nG8FQOBxq90tPzSigf4pATbajXBf9nPTxz+GnbuY9PwYdayEBNl95rRM9UL
+GqGoQ/u+YlxUS939lWwiD5dPdWTKMLEYURIOlnfZ72t1Vtk7T18rI+q8Y47zgQKBgQD+cFsbgaaM
+0kx+F9W8yrn22JDTLbCwKggg+c06BHceWgE3ZtXc/SUk62sQtpaWwlJVEJjjpw3Fm0TM6IlPApl4
+AYDpJNGANegV+8ySRVSzsCSkmKG8ct0k14DEryDUSgbF3c0HLzOg2980kJRIhP+xu5z/gLn4swIQ
+N+eWYDHemwKBgQDeHBZWj7n7dJSywJDeyzL836qMcX9MkEXXy5kgJXGmpPaUQOcrFmW3+ZhNePQD
+tRmR7BGSaiuYRsz3zwJFqtyDOSbuC68jBcJNjOCPJjDpQBT6PaFKItLr561fOYDtn9o7cI4BxfQM
+lseH6GynqLpZgC2De8OM98LMwxW/d4YQMQKBgQDj0EfS5g/wsG7qy36FTmKZYSiy3IsCAHBMzj1x
+wAPDukSyjTHZbxMt7ldrnIBSteSv429xDecn0jEU4vPmOWad64K3vU6TZDDMVirBoLAJPyJf+YV+
+zL2yuf3CnSdgzHMqAMENuLaaRaOhVf5evC6QvXIB1wksY2LqkJObsb+VFwKBgC62K4CC87NNnmRF
+mXIxvARwqbalvAcHJJkwyYB4P4GzmeQuDjACotvhU0Wf1XneIYWN51gqmgaJhVvsnma2e2/hmi1g
+KbIs6ONUaHnSp2C2yHKkeYJU9pUEgXLQbiwLfWMY1dTLo/rtzwLnP8q28pIWIfxQEB1akg5sTOua
+oIhRAoGBANZr0m77VVquTuGMFgbJ8eY9t1BbeuNbZ/AgzVY6D11I4U91MIWX53NL56A1CQCSODP+
+g6Gc/eyKtQ2p1d0Vk5nuaGvJ7+pDkiQ5DiqVo+t0yuWJE1nfatgt3EW2rLbYk813ScL3DedErHuX
+EbuAIL+ixbx0G/OG8jLfhsW7t8UZ
+-----END PRIVATE KEY-----</textarea>
+    <span>我的公钥</span>
+    <textarea class="form-control" rows="3" id="myPublicKeyID">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3MFZf4HdMLnft7B4Rso+5dz+shsk0s04
+J04NiplECX0UM37mDwCuWv8wqX6iZFjYWLvRxCrOnt/ZSkJ8vfYGWhzfGmo2CqWAokM1PFm9bDgl
+7j+5kNpjPCw1NMLIg9AawPOEImbNA2PZ/MmTtBZFwQdfpeg4rP5OIekEOswoYIcGGwyxvo7cfHNC
+mo0pAPBRM/ZQKDYlc1v3APxMWn153RiU4iiSQU3Nq7QoYi3FugHCju6Wbc2/9LZqOvuZbPOn3uYM
+sD5kDxVrCuEYF9AHh7/yf+vRkIfyaYyhJhIEQrmwyu1O5l8v3JFHvFY7YW6yPgT7uomnPz6pIw8F
+GZdLqwIDAQAB</textarea>
+    <span>内容</span>
+    <textarea class="form-control" rows="3" id="contentID"></textarea>
+    <span>目标公钥</span>
+    <textarea class="form-control" rows="3" id="recievePublicKeyID">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgsUqlohcm/wi387w4nZX28aA+oo7/MHX
+D990jAyF4cxFOBm03OTuOLLX6AVW8QjDZo2DvHos7PUBzGXyIe/gsLnS/6fujMo9821L3QL6ZqGK
+GnMfhHTKXV82hzxJMeg8o0U6jlUgcjs/LE/RnLA8q/XbKl/GV3ee+RYib7kQaGaMR2cFFtJ0H6z2
+/dD2z6eYrwmkWEC94C/UkJRKnzookNwo70BbarxH6JPElABfFQdBplXWssnWDACk8dP6NyptZJr1
+68HpzJ0SrN3iW0UJ4QtBZfo/A7zl/bd1c+/RkP2C6EsbyzumrJLsW5/Kr6QBW8SHuDDSgtkNI3gG
+J4s9uQIDAQAB</textarea>
+    <input type="button" value="提交" onclick="sendContent()" />
+    <div id="returnResultId"></div>
+</form>
+</body>
+</html>
